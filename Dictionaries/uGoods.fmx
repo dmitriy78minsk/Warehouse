@@ -1,0 +1,111 @@
+object frmGoods: TfrmGoods
+  Left = 0
+  Top = 0
+  BorderIcons = [biSystemMenu]
+  BorderStyle = Single
+  Caption = #1058#1086#1074#1072#1088#1099
+  ClientHeight = 480
+  ClientWidth = 640
+  Position = MainFormCenter
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object tbActions: TToolBar
+    Size.Width = 640.000000000000000000
+    Size.Height = 40.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object btAdd: TSpeedButton
+      Align = Left
+      Size.Width = 54.000000000000000000
+      Size.Height = 40.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'additembutton'
+      Text = 'btAdd'
+      TextSettings.Trimming = None
+      OnClick = btAddClick
+    end
+    object btDelete: TSpeedButton
+      Align = Left
+      Position.X = 54.000000000000000000
+      Size.Width = 54.000000000000000000
+      Size.Height = 40.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'deleteitembutton'
+      TextSettings.Trimming = None
+      OnClick = btDeleteClick
+    end
+  end
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 432.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 48.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object btClose: TCornerButton
+      Align = Right
+      ModalResult = 1
+      Margins.Left = 8.000000000000000000
+      Margins.Top = 8.000000000000000000
+      Margins.Right = 8.000000000000000000
+      Margins.Bottom = 8.000000000000000000
+      Position.X = 552.000000000000000000
+      Position.Y = 8.000000000000000000
+      Sides = [Top, Left, Bottom, Right]
+      Size.Width = 80.000000000000000000
+      Size.Height = 32.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Text = #1047#1072#1082#1088#1099#1090#1100
+      TextSettings.Trimming = None
+      XRadius = 3.000000000000000000
+      YRadius = 3.000000000000000000
+    end
+  end
+  object gridGoods: TStringGrid
+    Align = Client
+    CanFocus = True
+    ClipChildren = True
+    Size.Width = 640.000000000000000000
+    Size.Height = 392.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+    RowCount = 0
+    Viewport.Width = 640.000000000000000000
+    Viewport.Height = 392.000000000000000000
+  end
+  object BindSourceDB1: TBindSourceDB
+    DataSet = dtmMain.qryGoods
+    ScopeMappings = <>
+    Left = 248
+    Top = 224
+  end
+  object BindingsList1: TBindingsList
+    Methods = <>
+    OutputConverters = <>
+    Left = 380
+    Top = 229
+    object LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource
+      Category = 'Quick Bindings'
+      DataSource = BindSourceDB1
+      GridControl = gridGoods
+      Columns = <
+        item
+          MemberName = 'GoodsId'
+          Visible = False
+        end
+        item
+          MemberName = 'GoodsName'
+          Header = #1053#1072#1079#1074#1072#1085#1080#1077
+          Width = 300
+        end
+        item
+          MemberName = 'SKU'
+          Header = #1040#1088#1090#1080#1082#1091#1083
+          Width = 300
+        end>
+    end
+  end
+end

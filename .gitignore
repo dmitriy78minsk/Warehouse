@@ -1,0 +1,17 @@
+# Delphi файлы истории
+**/__history/
+
+# Скомпилированные модули и бинарники
+*.dcu
+*.exe
+*.dll
+*.res
+*.local
+*.identcache
+*.projdata
+*.tvsconfig
+
+# Папки сборки
+__recovery/
+Win32/
+Win64/
