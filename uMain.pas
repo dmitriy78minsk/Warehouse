@@ -12,25 +12,44 @@ uses
   Fmx.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Grid, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.StdCtrls, uGoods, uWarehouses,
-  uPlaces;
+  uPlaces, FMX.DateTimeCtrls;
 
 type
   TfrmMain = class(TForm)
-    qryStock: TFDQuery;
-    StringGrid1: TStringGrid;
-    BindSourceDB: TBindSourceDB;
-    BindingsList: TBindingsList;
-    LinkGridToDataSourceBindSourceDB: TLinkGridToDataSource;
     toolbar: TToolBar;
     btGoods: TSpeedButton;
     btWarehouses: TSpeedButton;
     btPlaces: TSpeedButton;
+    deReportDate: TDateEdit;
+    teReportTime: TTimeEdit;
+    lbDate: TLabel;
+    btShowGoods: TSpeedButton;
+    grInventory: TStringGrid;
+    qryInventory: TFDQuery;
+    qryInventoryWarehouseName: TWideStringField;
+    qryInventoryWarehouseAddress: TWideStringField;
+    qryInventoryPlaceName: TWideStringField;
+    qryInventoryGoodsName: TWideStringField;
+    qryInventoryBatchNum: TWideStringField;
+    qryInventoryQtyAtDate: TFMTBCDField;
+    qryInventoryPurchasePrice: TFMTBCDField;
+    qryInventoryTotalSum: TFMTBCDField;
+    qryInventoryBatchId: TLargeintField;
+    qryInventoryLocId: TLargeintField;
+    qryInventoryGoodsId: TLargeintField;
+    qryInventoryPurchaseDate: TSQLTimeStampField;
+    qryInventoryPlaceId: TLargeintField;
+    qryInventoryWarehouseId: TLargeintField;
+    BindSourceDB1: TBindSourceDB;
+    BindingsList1: TBindingsList;
+    LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource;
     procedure FormShow(Sender: TObject);
     procedure btGoodsClick(Sender: TObject);
     procedure btWarehousesClick(Sender: TObject);
     procedure btPlacesClick(Sender: TObject);
+    procedure btShowGoodsClick(Sender: TObject);
   private
-    { Private declarations }
+    procedure LoadInventory;
   public
     { Public declarations }
   end;
@@ -72,6 +91,11 @@ begin
   end;
 end;
 
+procedure TfrmMain.btShowGoodsClick(Sender: TObject);
+begin
+   LoadInventory();
+end;
+
 procedure TfrmMain.btWarehousesClick(Sender: TObject);
 var
   frmWarehouse: TfrmWarehouse;
@@ -90,14 +114,25 @@ end;
 procedure TfrmMain.FormShow(Sender: TObject);
 begin
   try
-    // Закрываем на случай, если он был открыт в дизайнере
-    qryStock.Close;
-    // Открываем запрос к базе
-    qryStock.Open;
+    LoadInventory();
   except
     on E: Exception do
       ShowMessage('Ошибка при загрузке данных: ' + E.Message);
   end;
+end;
+
+procedure TfrmMain.LoadInventory;
+var
+  TargetDT: TDateTime;
+begin
+  TargetDT := Trunc(deReportDate.Date) + Frac(teReportTime.Time);
+
+  qryInventory.Close;
+
+  qryInventory.ParamByName('TARGETDATE').Value := TargetDT;
+
+  qryInventory.Open;
+
 end;
 
 end.

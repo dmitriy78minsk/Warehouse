@@ -55,7 +55,6 @@ object dtmMain: TdtmMain
     end
   end
   object qryWarehouse: TFDQuery
-    Active = True
     AggregatesActive = True
     Connection = dbConn
     UpdateOptions.AutoIncFields = 'WarehouseId'
@@ -88,7 +87,6 @@ object dtmMain: TdtmMain
     end
   end
   object qryPlaces: TFDQuery
-    Active = True
     BeforePost = qryPlacesBeforePost
     AggregatesActive = True
     Connection = dbConn
