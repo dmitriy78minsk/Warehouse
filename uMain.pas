@@ -12,14 +12,11 @@ uses
   Fmx.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Grid, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.StdCtrls, uGoods, uWarehouses,
-  uPlaces, FMX.DateTimeCtrls;
+  uPlaces, FMX.DateTimeCtrls, uDocIncoming;
 
 type
   TfrmMain = class(TForm)
     toolbar: TToolBar;
-    btGoods: TSpeedButton;
-    btWarehouses: TSpeedButton;
-    btPlaces: TSpeedButton;
     deReportDate: TDateEdit;
     teReportTime: TTimeEdit;
     lbDate: TLabel;
@@ -43,11 +40,19 @@ type
     BindSourceDB1: TBindSourceDB;
     BindingsList1: TBindingsList;
     LinkGridToDataSourceBindSourceDB1: TLinkGridToDataSource;
+    Panel1: TPanel;
+    btGoods: TSpeedButton;
+    btWarehouses: TSpeedButton;
+    btPlaces: TSpeedButton;
+    pnlDocs: TPanel;
+    btIncoming: TSpeedButton;
     procedure FormShow(Sender: TObject);
     procedure btGoodsClick(Sender: TObject);
     procedure btWarehousesClick(Sender: TObject);
     procedure btPlacesClick(Sender: TObject);
     procedure btShowGoodsClick(Sender: TObject);
+    procedure btIncomingClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     procedure LoadInventory;
   public
@@ -72,6 +77,26 @@ begin
   finally
     dtmMain.qryGoods.Close;
     frmGoods.Free;
+  end;
+end;
+
+procedure TfrmMain.btIncomingClick(Sender: TObject);
+var
+  frmDocIncoming: TTfrmDocIncoming;
+begin
+  frmDocIncoming := TTfrmDocIncoming.Create(Self);
+  try
+    dtmMain.qryWarehouse.Open;
+    dtmMain.qryGoods.Open;
+    if frmDocIncoming.ShowModal = mrOk then
+    begin
+      teReportTime.Time := Now;
+      LoadInventory();
+    end;
+  finally
+    dtmMain.qryGoods.Close;
+    dtmMain.qryWarehouse.Close;
+    frmDocIncoming.Free;
   end;
 end;
 
@@ -109,6 +134,12 @@ begin
     dtmMain.qryWarehouse.Close;
     frmWarehouse.Free;
   end;
+end;
+
+procedure TfrmMain.FormCreate(Sender: TObject);
+begin
+  deReportDate.Date := Now;
+  teReportTime.Time := Now;
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);

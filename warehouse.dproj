@@ -331,6 +331,10 @@
             <Form>frmPlaces</Form>
             <FormType>fmx</FormType>
         </DCCReference>
+        <DCCReference Include="Docs\uDocIncoming.pas">
+            <Form>TfrmDocIncoming</Form>
+            <FormType>fmx</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

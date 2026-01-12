@@ -1,13 +1,10 @@
 ﻿[]
-Coordinates=148,1,82,33
+Coordinates=227,249,56,51
 ExplicitSubNodes=AutoCapture
 Visible=True
 
 [toolbar]
 Coordinates=75,1,49,33
-
-[btGoods]
-Coordinates=0,0,56,51
 
 [dtmMain.qryGoods]
 Coordinates=159,80,108,33
@@ -16,9 +13,6 @@ Visible=False
 [dtmMain.qryWarehouse]
 Visible=False
 Coordinates=14,70,131,33
-
-[btWarehouses]
-Coordinates=0,0,85,51
 
 [frmGoods.BindSourceDB1]
 Coordinates=159,80,144,123
@@ -29,9 +23,6 @@ Coordinates=14,70,161,123
 [dtmMain.qryPlaces]
 Visible=False
 Coordinates=341,1,108,33
-
-[btPlaces]
-Coordinates=227,249,56,51
 
 [frmPlaces.BindSourceDB1]
 Coordinates=133,70,144,141
@@ -103,4 +94,25 @@ Coordinates=415,176,96,321
 
 [BindingsList1]
 Coordinates=143,1,82,33
+
+[Panel1]
+Coordinates=104,53,47,33
+
+[btWarehouses]
+Coordinates=143,1,85,51
+
+[btGoods]
+Coordinates=45,70,56,51
+
+[btPlaces]
+Coordinates=0,0,56,51
+
+[pnlDocs]
+Coordinates=266,1,54,33
+
+[btIncoming]
+Coordinates=266,53,69,51
+
+[TfrmDocIncoming.qryPlacesByWarehouse]
+Coordinates=706,53,222,123
 

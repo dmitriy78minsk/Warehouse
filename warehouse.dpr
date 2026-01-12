@@ -8,7 +8,8 @@ uses
   uGoods in 'Dictionaries\uGoods.pas' {frmGoods},
   uDBUtils in 'Utils\uDBUtils.pas',
   uWarehouses in 'Dictionaries\uWarehouses.pas' {frmWarehouse},
-  uPlaces in 'Dictionaries\uPlaces.pas' {frmPlaces};
+  uPlaces in 'Dictionaries\uPlaces.pas' {frmPlaces},
+  uDocIncoming in 'Docs\uDocIncoming.pas' {TfrmDocIncoming};
 
 {$R *.res}
 
