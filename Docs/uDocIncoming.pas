@@ -88,8 +88,7 @@ begin
     // 4. Успех!
     ShowMessage('Товар успешно принят на склад!');
 
-    // Закрываем форму прихода
-    Close;
+    ModalResult := mrOk;
 
   except
     on E: Exception do

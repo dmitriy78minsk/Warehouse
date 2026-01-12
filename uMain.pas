@@ -12,7 +12,7 @@ uses
   Fmx.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Grid, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.StdCtrls, uGoods, uWarehouses,
-  uPlaces, FMX.DateTimeCtrls, uDocIncoming;
+  uPlaces, FMX.DateTimeCtrls, uDocIncoming, FMX.Menus, uDocManualOutgoing;
 
 type
   TfrmMain = class(TForm)
@@ -46,6 +46,9 @@ type
     btPlaces: TSpeedButton;
     pnlDocs: TPanel;
     btIncoming: TSpeedButton;
+    ppMenu: TPopupMenu;
+    miDocOutgoing: TMenuItem;
+    btRefresh: TSpeedButton;
     procedure FormShow(Sender: TObject);
     procedure btGoodsClick(Sender: TObject);
     procedure btWarehousesClick(Sender: TObject);
@@ -53,6 +56,8 @@ type
     procedure btShowGoodsClick(Sender: TObject);
     procedure btIncomingClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure miDocOutgoingClick(Sender: TObject);
+    procedure btRefreshClick(Sender: TObject);
   private
     procedure LoadInventory;
   public
@@ -90,7 +95,6 @@ begin
     dtmMain.qryGoods.Open;
     if frmDocIncoming.ShowModal = mrOk then
     begin
-      teReportTime.Time := Now;
       LoadInventory();
     end;
   finally
@@ -139,7 +143,7 @@ end;
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   deReportDate.Date := Now;
-  teReportTime.Time := Now;
+  teReportTime.Time := EncodeTime(23, 59, 59, 0);
 end;
 
 procedure TfrmMain.FormShow(Sender: TObject);
@@ -164,6 +168,39 @@ begin
 
   qryInventory.Open;
 
+end;
+
+procedure TfrmMain.miDocOutgoingClick(Sender: TObject);
+var
+  frmDocManualOutgoing: TfrmDocManualOutgoing;
+begin
+  if grInventory.Selected < 0 then
+    Exit;
+
+  frmDocManualOutgoing := TfrmDocManualOutgoing.Create(Self);
+  try
+    frmDocManualOutgoing.Caption := Format('Списание: %s (Партия: %s)',
+      [qryInventory.FieldByName('GoodsName').AsString,
+       qryInventory.FieldByName('BatchNum').AsString]);
+
+    frmDocManualOutgoing.selectedBatchId := qryInventory.FieldByName('BatchId').AsInteger;
+    frmDocManualOutgoing.selectedPlaceId := qryInventory.FieldByName('PlaceId').AsInteger;
+    // Ограничиваем ввод, чтобы не списали лишнего
+    frmDocManualOutgoing.edtQty.Max := qryInventory.FieldByName('QtyAtDate').AsInteger;
+    frmDocManualOutgoing.edtQty.Value := frmDocManualOutgoing.edtQty.Max;
+
+    if frmDocManualOutgoing.ShowModal = mrOk then
+    begin
+      LoadInventory();
+    end;
+  finally
+    frmDocManualOutgoing.Free;
+  end;
+end;
+
+procedure TfrmMain.btRefreshClick(Sender: TObject);
+begin
+  LoadInventory();
 end;
 
 end.

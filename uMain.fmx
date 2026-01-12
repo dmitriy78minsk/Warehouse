@@ -122,18 +122,43 @@ object frmMain: TfrmMain
         OnClick = btIncomingClick
       end
     end
+    object btRefresh: TSpeedButton
+      Align = Left
+      Hint = #1054#1073#1085#1086#1074#1080#1090#1100
+      Margins.Left = 8.000000000000000000
+      Margins.Top = 4.000000000000000000
+      Margins.Bottom = 4.000000000000000000
+      Position.X = 369.000000000000000000
+      Position.Y = 4.000000000000000000
+      Size.Width = 49.000000000000000000
+      Size.Height = 40.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'refreshtoolbutton'
+      TextSettings.Trimming = None
+      OnClick = btRefreshClick
+    end
   end
   object grInventory: TStringGrid
     Align = Client
     CanFocus = True
     ClipChildren = True
+    PopupMenu = ppMenu
     Size.Width = 900.000000000000000000
     Size.Height = 494.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 9
     RowCount = 0
+    Options = [ColumnResize, ColumnMove, ColLines, RowLines, RowSelect, Tabs, Header, HeaderClick, AutoDisplacement]
     Viewport.Width = 896.000000000000000000
     Viewport.Height = 469.000000000000000000
+  end
+  object ppMenu: TPopupMenu
+    Left = 144
+    Top = 192
+    object miDocOutgoing: TMenuItem
+      Text = #1057#1087#1080#1089#1072#1090#1100' '#1090#1086#1074#1072#1088
+      OnClick = miDocOutgoingClick
+    end
   end
   object qryInventory: TFDQuery
     Active = True
