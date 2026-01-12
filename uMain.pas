@@ -50,7 +50,6 @@ begin
   try
     dtmMain.qryGoods.Open;
     frmGoods.ShowModal;
-    // qryStock.Refresh;
   finally
     dtmMain.qryGoods.Close;
     frmGoods.Free;
