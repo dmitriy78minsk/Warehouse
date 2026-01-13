@@ -1,4 +1,4 @@
--- 1. ОЧИСТКА (Соблюдаем порядок из-за внешних ключей)
+-- 1. ОЧИСТКА
 TRUNCATE TABLE DocLines;
 DELETE FROM Documents;    DBCC CHECKIDENT ('Documents', RESEED, 0);
 DELETE FROM BatchLoc;
@@ -7,7 +7,10 @@ DELETE FROM Place;        DBCC CHECKIDENT ('Place', RESEED, 0);
 DELETE FROM Warehouse;    DBCC CHECKIDENT ('Warehouse', RESEED, 0);
 DELETE FROM Goods;        DBCC CHECKIDENT ('Goods', RESEED, 0);
 
--- 2. СПРАВОЧНИКИ (Создаем ID 1 и ID 2)
+PRINT '--- 1. База очищена ---';
+
+-- 2. ЗАПОЛНЕНИЕ СПРАВОЧНИКОВ
+-- ----------------------------------------------------------
 INSERT INTO Goods (GoodsName, SKU) VALUES ('Монитор 24 дюйма', 'MON-24-IPS'); -- GoodsId: 1
 INSERT INTO Warehouse (WarehouseName, Address) VALUES ('Основной склад', 'ул. Промышленная, 1'); -- WarehouseId: 1
 INSERT INTO Warehouse (WarehouseName, Address) VALUES ('Склад выдачи', 'ул. Центральная, 10'); -- WarehouseId: 2
@@ -15,45 +18,49 @@ INSERT INTO Warehouse (WarehouseName, Address) VALUES ('Склад выдачи', 'ул. Цент
 INSERT INTO Place (WarehouseId, PlaceName) VALUES (1, 'Полка А-1'); -- PlaceId: 1
 INSERT INTO Place (WarehouseId, PlaceName) VALUES (2, 'Зона выдачи'); -- PlaceId: 2
 
--- 3. СОБЫТИЕ: ПРИХОД (01.01.2026)
--- Партия №1
-INSERT INTO Batches (GoodsId, BatchNum, PurchasePrice, PurchaseDate, InitialQty)
-VALUES (1, 'BATCH-001', 1500.00, '20260101 10:00:00', 100); -- BatchId: 1
+PRINT '--- 2. Справочники заполнены ---';
 
--- Документ №1 (Приход)
-INSERT INTO Documents (DocNum, DocDate, DocType) 
-VALUES ('V-001', '20260101 10:00:00', 1); -- DocId: 1
+-- 3. СОБЫТИЕ: ПРИХОД (100 шт на Полку А-1)
+-- ----------------------------------------------------------
+EXEC dbo.sp_AddIncoming 
+    @GoodsId = 1, 
+    @PlaceId = 1, 
+    @Qty = 100.000, 
+    @Price = 1500.00, 
+    @BatchNum = 'BATCH-001', 
+    @DocNum = 'V-001';
 
--- Строка документа (Приход на PlaceId 1)
-INSERT INTO DocLines (DocId, BatchId, Qty, Price, ToPlaceId) 
-VALUES (1, 1, 100, 1500.00, 1);
+PRINT '--- 3. Приход выполнен (sp_AddIncoming) ---';
 
--- Остаток: 100 на Складе 1
-INSERT INTO BatchLoc (BatchId, PlaceId, CurrentQty) VALUES (1, 1, 100);
+-- 4. СОБЫТИЕ: ПЕРЕМЕЩЕНИЕ (30 шт с Полки А-1 в Зону выдачи)
+-- ----------------------------------------------------------
+EXEC dbo.sp_MoveStock
+    @BatchId = 1,
+    @FromPlaceId = 1,
+    @ToPlaceId = 2,
+    @Qty = 30.000,
+    @DocNum = 'T-001';
 
+PRINT '--- 4. Перемещение выполнено (sp_MoveStock) ---';
 
--- 4. СОБЫТИЕ: ПЕРЕМЕЩЕНИЕ (05.01.2026)
--- Документ №2 (Перемещение)
-INSERT INTO Documents (DocNum, DocDate, DocType) 
-VALUES ('T-001', '20260105 12:00:00', 3); -- DocId: 2
+-- 5. СОБЫТИЕ: РАСХОД MANUAL (10 шт из Зоны выдачи)
+-- ----------------------------------------------------------
+EXEC dbo.sp_AddOutgoingManual
+    @BatchId = 1,
+    @PlaceId = 2,
+    @Qty = 10.000,
+    @DocNum = 'S-001-MAN';
 
--- Строка: с 1 на 2 (30 шт)
-INSERT INTO DocLines (DocId, BatchId, Qty, Price, FromPlaceId, ToPlaceId) 
-VALUES (2, 1, 30, 1500.00, 1, 2);
+PRINT '--- 5. Ручной расход выполнен (sp_AddOutgoingManual) ---';
 
--- Обновляем остатки: на первом стало 70, на втором появилось 30
-UPDATE BatchLoc SET CurrentQty = 70 WHERE BatchId = 1 AND PlaceId = 1;
-INSERT INTO BatchLoc (BatchId, PlaceId, CurrentQty) VALUES (1, 2, 30);
+-- 6. СОБЫТИЕ: РАСХОД FIFO (5 шт с Основного склада)
+-- ----------------------------------------------------------
+-- Процедура сама найдет остаток на PlaceId 1 (где осталось 70 шт)
+EXEC dbo.sp_AddOutgoingFIFO
+    @GoodsId = 1,
+    @WarehouseId = 1,
+    @QtyToIssue = 5.000,
+    @DocNum = 'S-002-FIFO';
 
+PRINT '--- 6. FIFO расход выполнен (sp_AddOutgoingFIFO) ---';
 
--- 5. СОБЫТИЕ: РАСХОД (10.01.2026)
--- Документ №3 (Расход)
-INSERT INTO Documents (DocNum, DocDate, DocType) 
-VALUES ('S-001', '20260110 15:30:00', 2); -- DocId: 3
-
--- Строка: уход со склада 2 (10 шт)
-INSERT INTO DocLines (DocId, BatchId, Qty, Price, FromPlaceId) 
-VALUES (3, 1, 10, 200.00, 2);
-
--- Обновляем остаток: на втором складе осталось 20
-UPDATE BatchLoc SET CurrentQty = 20 WHERE BatchId = 1 AND PlaceId = 2;
