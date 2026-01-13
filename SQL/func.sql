@@ -8,7 +8,7 @@ RETURN (
         P.PlaceName,
         G.GoodsName,
         B.BatchNum,
-        -- 1. —читаем количество на дату (выносим в подзапрос или дублируем формулу)
+        -- —читаем количество на дату
         (BL.CurrentQty 
          + ISNULL((SELECT SUM(DL.Qty) FROM DocLines DL JOIN Documents D ON DL.DocId = D.DocId 
                    WHERE DL.BatchId = BL.BatchId AND DL.FromPlaceId = BL.PlaceId 
@@ -20,7 +20,7 @@ RETURN (
         
         B.PurchasePrice,
 
-        -- 2. —читаем общую сумму (та же формула количества * цена)
+        -- —читаем общую сумму
         ((BL.CurrentQty 
          + ISNULL((SELECT SUM(DL.Qty) FROM DocLines DL JOIN Documents D ON DL.DocId = D.DocId 
                    WHERE DL.BatchId = BL.BatchId AND DL.FromPlaceId = BL.PlaceId 
