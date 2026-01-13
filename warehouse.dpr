@@ -10,7 +10,7 @@ uses
   uWarehouses in 'Dictionaries\uWarehouses.pas' {frmWarehouse},
   uPlaces in 'Dictionaries\uPlaces.pas' {frmPlaces},
   uDocIncoming in 'Docs\uDocIncoming.pas' {TfrmDocIncoming},
-  uDocManualOutgoing in 'Docs\uDocManualOutgoing.pas' {frmDocManualOutgoing};
+  uDocOutgoing in 'Docs\uDocOutgoing.pas' {frmDocOutgoing};
 
 {$R *.res}
 

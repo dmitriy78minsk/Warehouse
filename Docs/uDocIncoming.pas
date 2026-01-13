@@ -45,7 +45,7 @@ type
   end;
 
 var
-  TfrmDocIncoming: TTfrmDocIncoming;
+  frmDocIncoming: TTfrmDocIncoming;
 
 implementation
 
@@ -53,9 +53,9 @@ implementation
 
 procedure TTfrmDocIncoming.btCloseClick(Sender: TObject);
 var
-  GId, PId: Integer;
+  goodsId, placeId: Integer;
 begin
-  // 1. Проверки "на пустые поля"
+  // Проверки "на пустые поля"
   if (cbGoods.ItemIndex = -1) or (cbPlaces.ItemIndex = -1) then
   begin
     ShowMessage('Ошибка: Выберите товар и место!');
@@ -68,16 +68,16 @@ begin
     Exit;
   end;
 
-  // 2. Получаем ID из выпадающих списков
-  GId := Integer(cbGoods.Items.Objects[cbGoods.ItemIndex]);
-  PId := Integer(cbPlaces.Items.Objects[cbPlaces.ItemIndex]);
+  // Получаем ID из выпадающих списков
+  goodsId := Integer(cbGoods.Items.Objects[cbGoods.ItemIndex]);
+  placeId := Integer(cbPlaces.Items.Objects[cbPlaces.ItemIndex]);
 
   try
-    // 3. Настройка и запуск хранимой процедуры в DataModule
+    // Настройка и запуск хранимой процедуры в DataModule
     spAddIncoming.Prepare;
 
-    spAddIncoming.ParamByName('@GoodsId').AsInteger := GId;
-    spAddIncoming.ParamByName('@PlaceId').AsInteger := PId;
+    spAddIncoming.ParamByName('@GoodsId').AsInteger := goodsId;
+    spAddIncoming.ParamByName('@PlaceId').AsInteger := placeId;
     spAddIncoming.ParamByName('@Qty').Value        := edtQty.Value;
     spAddIncoming.ParamByName('@Price').Value      := edtPrice.Value;
     spAddIncoming.ParamByName('@BatchNum').AsString  := edtBatchNum.Text;
@@ -85,11 +85,9 @@ begin
 
     spAddIncoming.ExecProc;
 
-    // 4. Успех!
     ShowMessage('Товар успешно принят на склад!');
 
     ModalResult := mrOk;
-
   except
     on E: Exception do
       ShowMessage('Ошибка БД: ' + E.Message);

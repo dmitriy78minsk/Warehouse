@@ -335,8 +335,8 @@
             <Form>TfrmDocIncoming</Form>
             <FormType>fmx</FormType>
         </DCCReference>
-        <DCCReference Include="Docs\uDocManualOutgoing.pas">
-            <Form>frmDocManualOutgoing</Form>
+        <DCCReference Include="Docs\uDocOutgoing.pas">
+            <Form>frmDocOutgoing</Form>
             <FormType>fmx</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">

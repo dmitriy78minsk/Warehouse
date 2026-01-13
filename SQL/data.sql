@@ -18,7 +18,7 @@ INSERT INTO Place (WarehouseId, PlaceName) VALUES (2, 'Зона выдачи'); -- PlaceId
 -- 3. СОБЫТИЕ: ПРИХОД (01.01.2026)
 -- Партия №1
 INSERT INTO Batches (GoodsId, BatchNum, PurchasePrice, PurchaseDate, InitialQty)
-VALUES (1, 'BATCH-001', 150.00, '20260101 10:00:00', 100); -- BatchId: 1
+VALUES (1, 'BATCH-001', 1500.00, '20260101 10:00:00', 100); -- BatchId: 1
 
 -- Документ №1 (Приход)
 INSERT INTO Documents (DocNum, DocDate, DocType) 
@@ -26,7 +26,7 @@ VALUES ('V-001', '20260101 10:00:00', 1); -- DocId: 1
 
 -- Строка документа (Приход на PlaceId 1)
 INSERT INTO DocLines (DocId, BatchId, Qty, Price, ToPlaceId) 
-VALUES (1, 1, 100, 150.00, 1);
+VALUES (1, 1, 100, 1500.00, 1);
 
 -- Остаток: 100 на Складе 1
 INSERT INTO BatchLoc (BatchId, PlaceId, CurrentQty) VALUES (1, 1, 100);
@@ -39,7 +39,7 @@ VALUES ('T-001', '20260105 12:00:00', 3); -- DocId: 2
 
 -- Строка: с 1 на 2 (30 шт)
 INSERT INTO DocLines (DocId, BatchId, Qty, Price, FromPlaceId, ToPlaceId) 
-VALUES (2, 1, 30, 150.00, 1, 2);
+VALUES (2, 1, 30, 1500.00, 1, 2);
 
 -- Обновляем остатки: на первом стало 70, на втором появилось 30
 UPDATE BatchLoc SET CurrentQty = 70 WHERE BatchId = 1 AND PlaceId = 1;
@@ -57,11 +57,3 @@ VALUES (3, 1, 10, 200.00, 2);
 
 -- Обновляем остаток: на втором складе осталось 20
 UPDATE BatchLoc SET CurrentQty = 20 WHERE BatchId = 1 AND PlaceId = 2;
-
--- ПРОВЕРКА ТЕКУЩЕГО СОСТОЯНИЯ
-SELECT 'Текущий остаток' as Status, G.GoodsName, W.WarehouseName, P.PlaceName, BL.CurrentQty 
-FROM BatchLoc BL
-JOIN Place P ON BL.PlaceId = P.PlaceId
-JOIN Warehouse W ON P.WarehouseId = W.WarehouseId
-JOIN Batches B ON BL.BatchId = B.BatchId
-JOIN Goods G ON B.GoodsId = G.GoodsId;

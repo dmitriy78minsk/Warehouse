@@ -1,15 +1,16 @@
-object frmDocManualOutgoing: TfrmDocManualOutgoing
+object frmDocOutgoing: TfrmDocOutgoing
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = Single
   Caption = 'Form1'
-  ClientHeight = 153
-  ClientWidth = 408
+  ClientHeight = 251
+  ClientWidth = 410
   Position = MainFormCenter
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
   DesignerMasterStyle = 0
   object edtQty: TNumberBox
     Touch.InteractiveGestures = [LongTap, DoubleTap]
@@ -55,38 +56,38 @@ object frmDocManualOutgoing: TfrmDocManualOutgoing
   end
   object Panel1: TPanel
     Align = Bottom
-    Position.Y = 105.000000000000000000
-    Size.Width = 408.000000000000000000
+    Position.Y = 203.000000000000000000
+    Size.Width = 410.000000000000000000
     Size.Height = 48.000000000000000000
     Size.PlatformDefault = False
     TabOrder = 1
-    object btClose: TCornerButton
+    object btSave: TCornerButton
       Align = Right
       Margins.Left = 8.000000000000000000
       Margins.Top = 8.000000000000000000
       Margins.Right = 8.000000000000000000
       Margins.Bottom = 8.000000000000000000
-      Position.X = 224.000000000000000000
+      Position.X = 226.000000000000000000
       Position.Y = 8.000000000000000000
       Sides = [Top, Left, Bottom, Right]
       Size.Width = 80.000000000000000000
       Size.Height = 32.000000000000000000
       Size.PlatformDefault = False
       TabOrder = 1
-      Text = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+      Text = #1057#1087#1080#1089#1072#1090#1100
       TextSettings.Trimming = None
       XRadius = 3.000000000000000000
       YRadius = 3.000000000000000000
-      OnClick = btCloseClick
+      OnClick = btSaveClick
     end
-    object CornerButton1: TCornerButton
+    object btClose: TCornerButton
       Align = Right
       ModalResult = 2
       Margins.Left = 8.000000000000000000
       Margins.Top = 8.000000000000000000
       Margins.Right = 8.000000000000000000
       Margins.Bottom = 8.000000000000000000
-      Position.X = 320.000000000000000000
+      Position.X = 322.000000000000000000
       Position.Y = 8.000000000000000000
       Sides = [Top, Left, Bottom, Right]
       Size.Width = 80.000000000000000000
@@ -99,11 +100,47 @@ object frmDocManualOutgoing: TfrmDocManualOutgoing
       YRadius = 3.000000000000000000
     end
   end
+  object cbGoods: TComboBox
+    Position.X = 127.000000000000000000
+    Position.Y = 112.000000000000000000
+    Size.Width = 273.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 10
+  end
+  object lbWarehouse: TLabel
+    ClipParent = True
+    Position.X = 14.000000000000000000
+    Position.Y = 163.000000000000000000
+    Size.Width = 41.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = #1057#1082#1083#1072#1076
+    TabOrder = 7
+  end
+  object cbWarehouse: TComboBox
+    Position.X = 127.000000000000000000
+    Position.Y = 160.000000000000000000
+    Size.Width = 273.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 8
+  end
+  object lbGoods: TLabel
+    ClipParent = True
+    Position.X = 14.000000000000000000
+    Position.Y = 115.000000000000000000
+    Size.Width = 41.000000000000000000
+    Size.Height = 17.000000000000000000
+    Size.PlatformDefault = False
+    Text = #1058#1086#1074#1072#1088
+    TabOrder = 9
+  end
   object spManualOut: TFDStoredProc
     Connection = dtmMain.dbConn
     StoredProcName = 'WarehouseDB.dbo.sp_AddOutgoingManual'
-    Left = 160
-    Top = 111
+    Left = 128
+    Top = 199
     ParamData = <
       item
         Position = 1
@@ -126,6 +163,46 @@ object frmDocManualOutgoing: TfrmDocManualOutgoing
       item
         Position = 4
         Name = '@Qty'
+        DataType = ftFMTBcd
+        Precision = 18
+        NumericScale = 3
+        ParamType = ptInput
+      end
+      item
+        Position = 5
+        Name = '@DocNum'
+        DataType = ftWideString
+        ParamType = ptInput
+        Size = 50
+      end>
+  end
+  object spFIFO: TFDStoredProc
+    Connection = dtmMain.dbConn
+    StoredProcName = 'WarehouseDB.dbo.sp_AddOutgoingFIFO'
+    Left = 40
+    Top = 199
+    ParamData = <
+      item
+        Position = 1
+        Name = '@RETURN_VALUE'
+        DataType = ftInteger
+        ParamType = ptResult
+      end
+      item
+        Position = 2
+        Name = '@GoodsId'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Position = 3
+        Name = '@WarehouseId'
+        DataType = ftInteger
+        ParamType = ptInput
+      end
+      item
+        Position = 4
+        Name = '@QtyToIssue'
         DataType = ftFMTBcd
         Precision = 18
         NumericScale = 3

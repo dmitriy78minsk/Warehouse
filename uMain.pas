@@ -12,7 +12,7 @@ uses
   Fmx.Bind.Editors, Data.Bind.Components, Data.Bind.Grid, Data.Bind.DBScope,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Grid, Data.DB,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, FMX.StdCtrls, uGoods, uWarehouses,
-  uPlaces, FMX.DateTimeCtrls, uDocIncoming, FMX.Menus, uDocManualOutgoing;
+  uPlaces, FMX.DateTimeCtrls, uDocIncoming, FMX.Menus, uDocOutgoing;
 
 type
   TfrmMain = class(TForm)
@@ -49,6 +49,7 @@ type
     ppMenu: TPopupMenu;
     miDocOutgoing: TMenuItem;
     btRefresh: TSpeedButton;
+    brFIFOOutGoing: TSpeedButton;
     procedure FormShow(Sender: TObject);
     procedure btGoodsClick(Sender: TObject);
     procedure btWarehousesClick(Sender: TObject);
@@ -58,6 +59,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure miDocOutgoingClick(Sender: TObject);
     procedure btRefreshClick(Sender: TObject);
+    procedure brFIFOOutGoingClick(Sender: TObject);
   private
     procedure LoadInventory;
   public
@@ -70,6 +72,31 @@ var
 implementation
 
 {$R *.fmx}
+
+procedure TfrmMain.brFIFOOutGoingClick(Sender: TObject);
+var
+  frmDocOutgoing: TfrmDocOutgoing;
+begin
+  if grInventory.Selected < 0 then
+    Exit;
+
+  frmDocOutgoing := TfrmDocOutgoing.Create(Self);
+  try
+    dtmMain.qryWarehouse.Open;
+    dtmMain.qryGoods.Open;
+    frmDocOutgoing.Caption := 'Автоматическое списание со склада';
+    frmDocOutgoing.Mode := wmFIFO;
+
+    if frmDocOutgoing.ShowModal = mrOk then
+    begin
+      LoadInventory();
+    end;
+  finally
+    dtmMain.qryGoods.Close;
+    dtmMain.qryWarehouse.Close;
+    frmDocOutgoing.Free;
+  end;
+end;
 
 procedure TfrmMain.btGoodsClick(Sender: TObject);
 var
@@ -133,7 +160,6 @@ begin
   try
     dtmMain.qryWarehouse.Open;
     frmWarehouse.ShowModal;
-    // qryStock.Refresh;
   finally
     dtmMain.qryWarehouse.Close;
     frmWarehouse.Free;
@@ -163,38 +189,36 @@ begin
   TargetDT := Trunc(deReportDate.Date) + Frac(teReportTime.Time);
 
   qryInventory.Close;
-
   qryInventory.ParamByName('TARGETDATE').Value := TargetDT;
-
   qryInventory.Open;
-
 end;
 
 procedure TfrmMain.miDocOutgoingClick(Sender: TObject);
 var
-  frmDocManualOutgoing: TfrmDocManualOutgoing;
+  frmDocOutgoing: TfrmDocOutgoing;
 begin
   if grInventory.Selected < 0 then
     Exit;
 
-  frmDocManualOutgoing := TfrmDocManualOutgoing.Create(Self);
+  frmDocOutgoing := TfrmDocOutgoing.Create(Self);
   try
-    frmDocManualOutgoing.Caption := Format('Списание: %s (Партия: %s)',
+    frmDocOutgoing.Mode := wmManual;
+    frmDocOutgoing.Caption := Format('Списание: %s (Партия: %s)',
       [qryInventory.FieldByName('GoodsName').AsString,
        qryInventory.FieldByName('BatchNum').AsString]);
 
-    frmDocManualOutgoing.selectedBatchId := qryInventory.FieldByName('BatchId').AsInteger;
-    frmDocManualOutgoing.selectedPlaceId := qryInventory.FieldByName('PlaceId').AsInteger;
+    frmDocOutgoing.selectedBatchId := qryInventory.FieldByName('BatchId').AsInteger;
+    frmDocOutgoing.selectedPlaceId := qryInventory.FieldByName('PlaceId').AsInteger;
     // Ограничиваем ввод, чтобы не списали лишнего
-    frmDocManualOutgoing.edtQty.Max := qryInventory.FieldByName('QtyAtDate').AsInteger;
-    frmDocManualOutgoing.edtQty.Value := frmDocManualOutgoing.edtQty.Max;
+    frmDocOutgoing.edtQty.Max := qryInventory.FieldByName('QtyAtDate').AsInteger;
+    frmDocOutgoing.edtQty.Value := frmDocOutgoing.edtQty.Max;
 
-    if frmDocManualOutgoing.ShowModal = mrOk then
+    if frmDocOutgoing.ShowModal = mrOk then
     begin
       LoadInventory();
     end;
   finally
-    frmDocManualOutgoing.Free;
+    frmDocOutgoing.Free;
   end;
 end;
 
