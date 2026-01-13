@@ -11,7 +11,10 @@ BEGIN
     SET NOCOUNT ON;
     BEGIN TRANSACTION;
     BEGIN TRY
-        DECLARE @DocId INT, @BatchId INT, @DocDate DATETIME = GETDATE();
+        DECLARE 
+           @DocId INT, 
+           @BatchId INT, 
+           @DocDate DATETIME = GETDATE();
 
         -- Создаем новую партию
         INSERT INTO Batches (GoodsId, BatchNum, PurchasePrice, PurchaseDate, InitialQty)
